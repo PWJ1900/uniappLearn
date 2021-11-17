@@ -5,6 +5,8 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
 	state: {
 		current: 0,
+		returnOrgin: false,//判断主页面内是否点击
+		defineId:false,
 		tabs: [{
 			name: '寻找车量',
 			path: '/pages/xzcl/index',
@@ -34,21 +36,23 @@ const store = new Vuex.Store({
 			useqshd: false,
 			usehtcz: false,
 			
-	}
+	},
+	searchDefine:false,
 	},
 	mutations: {
+		changeSearch(state, val){
+		     state.searchDefine = val
+			
+		},
+		changeDefine(state, val){
+		     state.defineId = val
+			
+		},
 		changeTab(state, index) {
-			// uni.navigateTo({
-			// 	url: state.tabs[index].path
-			// })
 			let j = 0
 			for(let i in state.pageUse){
 				if(j == index){
 					state.pageUse[i] = true
-					
-					// uni.navigateTo({
-					// 	url:state.
-					// })
 				}
 				else{
 					state.pageUse[i] = false
@@ -60,10 +64,6 @@ const store = new Vuex.Store({
 			console.log('当前选中的项：' + index)
 		},
 		changeTab2(state, index) {
-			
-			// uni.navigateTo({
-			// 	url: state.tabs2MZ[index].path
-			// })
 			let j = -3
 			for(let i in state.pageUse){
 				if(j == index){
@@ -77,7 +77,10 @@ const store = new Vuex.Store({
 			state.current = -1
 			state.current2 = index
 			console.log('当前选中的项：' + index)
-		}
+		},
+		returnOrginUse(state,val){
+			state.returnOrgin = val
+		},
 	},
 	actions: {
 

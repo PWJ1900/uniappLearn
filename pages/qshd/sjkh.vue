@@ -4,13 +4,13 @@
 		<!-- 签收回单 -->
 		<uni-row>
 			<uni-col :span="8">
-				<uni-easyinput id="use" v-model="carOrgoodsNum" placeholder="输入客户查询" @iconClick="onClick">
+				<uni-easyinput id="use" v-model="carOrgoodsNum" placeholder="输入客户查询">
 				</uni-easyinput>
 			</uni-col>
 			<uni-col :span="12">
 				<!-- <input type="text" placeholder="起止时间"/> -->
 				<view class="example-body">
-					<uni-datetime-picker v-model="datetimerange" type="daterange" rangeSeparator="至" />
+					<uni-datetime-picker v-model="datetime" type="date"/>
 				</view>
 			</uni-col>
 			<uni-col :span="4">
@@ -42,7 +42,7 @@
 			<!-- table2 -->
 			
 		</uni-card>
-	<view style="padding-left: 32%; padding-top: 15rpx;"><text style="color: #606266;padding-right: 12rpx;">累计:</text><label style="background-color: #F0F0F0; padding: 8rpx 50rpx 12rpx 50rpx;">{{chooseNum}}</label><text style="color: #606266">份</text>
+	<view style="padding-left: 32%; padding-top: 15rpx;"><text style="color: #606266;padding-right: 12rpx;z-index: 1000;">累计:</text><label style="background-color: #F0F0F0; padding: 8rpx 50rpx 12rpx 50rpx;">{{chooseNum}}</label><text style="color: #606266">份</text>
 	<button style="width: 200rpx;font-size: smaller;margin-right: 0;" @click="$emit('sjkhDefine',false)">返回</button>
 		<!-- 累计<uni-tag :text="chooseNum+`份`"></uni-tag> -->
 	</view>
@@ -63,7 +63,7 @@
 				chooseNum: 0,
 				totalContent: 100,
 				// styleUse:{height: '100%'},
-				datetimerange: [],
+				datetime: '',
 				header: ['日期车号', '交货单号', '数量', '起点', '讫点', '单位', '签收日期'],
 				listSecond: [],
 				list: [{
@@ -233,10 +233,10 @@
 					.includes(this.carOrgoodsNum.toLowerCase())
 
 				).filter(
-					data => !this.datetimerange[0] ||
+					data => !this.datetime ||
 					(data['rqch'] + "")
 					.toLowerCase()
-					.includes(this.datetimerange[0].replaceAll("-", "/").toLowerCase())
+					.includes(this.datetime.replaceAll("-", "/").toLowerCase())
 
 				)
 				// .filter(data => !this.datetimerange[1] ||
@@ -249,6 +249,18 @@
 			},
 			popShare(){
 				// this.$refs.popup.show()
+				uni.share({
+				    provider: "weixin",
+				    scene: "WXSceneSession",
+				    type: 1,
+				    summary: "我正在使用HBuilderX开发uni-app，赶紧跟我一起来体验！",
+				    success: function (res) {
+				        console.log("success:" + JSON.stringify(res));
+				    },
+				    fail: function (err) {
+				        console.log("fail:" + JSON.stringify(err));
+				    }
+				});
 			}
 		}
 	}
@@ -263,9 +275,10 @@
 		font-size: xx-small !important;
 	}
 
-	/deep/ .uni-date-x.uni-date-range {
+	/deep/ .uni-date-x.uni-date-single{
 		height: 57rpx;
 	}
+	
 
 	/deep/ .uni-easyinput__content.is-input-border {
 		height: 60rpx !important;
@@ -326,6 +339,10 @@
 		background-color: rgba(49, 139, 74, 1);
 		color: #FFFAFA;
 
+	}
+	/deep/ .uni-date__icon-clear{
+		margin-top: -12rpx !important;
+		
 	}
 </style>
 

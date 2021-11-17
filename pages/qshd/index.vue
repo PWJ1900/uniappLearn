@@ -1,11 +1,24 @@
 <template>
 	<view>
-		<qshd v-if="qshdDefine&&!hdqsDefine" @qshdReturn="getqshd"></qshd>
-		<sjkh v-if="sjkhDefine&&!hdqsDefine" @sjkhDefine="getsjkh"></sjkh>
-		<hdqs v-if="hdqsDefine" @hdqsDefine="gethdqs"></hdqs>
+		<qshd v-if="qshdDefine&&!searchDefine" @qshdReturn="getqshd"></qshd>
+		<!-- &&!hdqsDefine -->
+		<sjkh v-if="sjkhDefine&&!searchDefine" @sjkhDefine="getsjkh"></sjkh>
+		<!-- &&!hdqsDefine -->
+		<hdqs v-if="searchDefine" @hdqsDefine="gethdqs"></hdqs>
+<!-- 		<qshd v-if="qshdDefine&&!hdqsDefine" @qshdReturn="getqshd"></qshd>
+		<uni-popup ref="popup1" type="bottom">底部弹出 Popup
+				<sjkh  @sjkhDefine="getsjkh"></sjkh>
+		</uni-popup>
+		<hdqs v-if="hdqsDefine" @hdqsDefine="gethdqs"></hdqs> -->
+	
 	</view>
 </template>
 <script>
+	import {
+		mapState,
+		mapGetters,
+		mapMutations
+	} from 'vuex'
 	import qshd from "./qshd.vue"
 	import sjkh from "./sjkh.vue"
 	import hdqs from "./hdqs.vue"
@@ -26,36 +39,39 @@
 				
 			}
 		},
-
+		computed:{
+			...mapState(['searchDefine','returnOrgin']),
+		},
 		watch:{
-			tranToqshd:{
-				handler(val){
-					this.hdqsDefine = val
+			returnOrgin(val){
+				if(val==true){
+					this.sjkhDefine = false
+					this.qshdDefine = true
 				}
-				
 			}
-			
 		},
 		methods: {
+			// ...mapMutations(['changeSearch']),
+			...mapMutations(['changeSearch','returnOrginUse']),
 			getqshd(data){
 				this.qshdDefine = data
+				this.returnOrginUse(false)
 				this.sjkhDefine = true
-				this.hdqsDefine = false
-				this.$emit("SearchReturn", false)
+				
+				// this.$refs.popup1.open("center")
 				
 			},
 			getsjkh(data){
 				this.sjkhDefine = data
 				this.qshdDefine = true
-				this.hdqsDefine = false
-				this.$emit("SearchReturn", false)
+				
+				// this.$refs.popup1.colse()
 			},
 			gethdqs(data){
-				this.hdqsDefine = data
 				this.qshdDefine = true
 				this.sjkhDefine = false
-				this.$emit("SearchReturn", false)
-				this.$emit("SearchReturn", false)
+				this.changeSearch(false)
+				
 			}
 			
 			

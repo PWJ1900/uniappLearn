@@ -70,6 +70,11 @@
 </template>
 
 <script>
+	import {
+		mapState,
+		mapGetters,
+		mapMutations
+	} from 'vuex'
 /**
  * v-tabs
  * @property {Number} value 选中的下标
@@ -145,7 +150,7 @@ export default {
     },
     height: {
       type: String,
-      default: '70rpx'
+      default: '71rpx'
     },
     lineColor: {
       type: String,
@@ -218,7 +223,7 @@ export default {
   },
   methods: {
     // 产生随机字符串
-	
+	...mapMutations(['changeSearch','returnOrginUse']),
     randomString(len) {
       len = len || 32
       let $chars =
@@ -232,7 +237,8 @@ export default {
     },
     // 切换事件
     change(index) {
-
+      this.changeSearch(false)
+	  this.returnOrginUse(true)
       if (this.current !== index) {
         this.current = index
         this.$emit('change', index)

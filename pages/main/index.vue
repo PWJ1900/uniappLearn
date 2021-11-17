@@ -1,9 +1,10 @@
 <template>
 	<view>	
-		<HeaderUse :qshdHistorySearch="pageUse['useqshd']" @useQshdSearch="tranToqshd"></HeaderUse>
+		<HeaderUse></HeaderUse>
 		<htcz v-if='pageUse["usehtcz"]'></htcz>
 		<sqzj v-if='pageUse["usesqzj"]'></sqzj>
-		<qshd v-if='pageUse["useqshd"]' :tranToqshd="gettranToqshd" @SearchReturn="defineSearch"></qshd>
+		<qshd v-if='pageUse["useqshd"]'></qshd>
+		<!-- @SearchReturn="defineSearch" -->
 		<xzcl v-if='pageUse["usexzcl"]'></xzcl>
 		<zfzj v-if='pageUse["usezfzj"]'></zfzj>
 		<index v-if='pageUse["useindex"]'></index>
@@ -39,13 +40,9 @@
 			...mapState(["pageUse"])
 		},
 		methods: {
-			tranToqshd(e){
-				this.gettranToqshd = e
-				
-			},
-			defineSearch(e){
-				this.gettranToqshd = e			
-			}
+			// defineSearch(e){
+			// 	this.gettranToqshd = e			
+			// }
 		
 			
 		},

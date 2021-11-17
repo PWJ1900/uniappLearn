@@ -4,21 +4,23 @@
 		<!-- 签收回单 -->
 		<uni-row>
 			<uni-col :span="5">
-				<button class="littleUseButtonAll" style="background-color: #F1F1F1;color: #3B4144;margin-left: 20rpx;margin-top: 10rpx;margin-bottom: 10rpx;">司机交单</button>
+				<button class="littleUseButtonAll"
+					style="background-color: #F1F1F1;color: #3B4144;margin-left: 20rpx;margin-top: 10rpx;margin-bottom: 10rpx;">司机交单</button>
 			</uni-col>
 			<uni-col :span="5">
-				<button class="littleUseButtonAll" @click="dcClick" style="margin-left: 20rpx;margin-top: 10rpx;margin-bottom: 10rpx;">送交客户</button>
+				<button class="littleUseButtonAll" @click="dcClick"
+					style="margin-left: 20rpx;margin-top: 10rpx;margin-bottom: 10rpx;">送交客户</button>
 			</uni-col>
 		</uni-row>
 		<uni-row>
 			<uni-col :span="8">
-				<uni-easyinput id="use" v-model="carOrgoodsNum" placeholder="输入交货号或车号" @iconClick="onClick">
+				<uni-easyinput id="use" v-model="carOrgoodsNum" placeholder="输入交货号或车号">
 				</uni-easyinput>
 			</uni-col>
 			<uni-col :span="12">
 				<!-- <input type="text" placeholder="起止时间"/> -->
 				<view class="example-body">
-					<uni-datetime-picker v-model="datetimerange" type="daterange" rangeSeparator="至" />
+					<uni-datetime-picker v-model="datetime" type="date" />
 				</view>
 			</uni-col>
 			<uni-col :span="4">
@@ -27,19 +29,19 @@
 		</uni-row>
 		<uni-card style="margin-top: 10rpx;">
 			<uni-table type="selection" @selection-change="change" border stripe emptyText="暂无更多数据"
-				style="max-height:750rpx; margin-top: 2%;" :key="1">
+				style="max-height:750rpx; margin-top: 2%;">
 				<!-- 表头行 -->
 				<uni-tr v-show="true">
-					<uni-th align="center" v-for="i,k in header" width="10" :key="k">{{i}}</uni-th>
+					<uni-th align="center" v-for="i,k in header" width="80" :key="k">{{i}}</uni-th>
 				</uni-tr>
 				<!-- 表格数据行 -->
 				<uni-tr v-for="j,nu in listSecond" :key="nu">
-					<uni-td v-for="w,index in listSecond[0]" width="40" style="height: 10rpx;" v-if="index!='pz'">
+					<uni-td v-for="w,index in listSecond[0]" width="80" style="height: 10rpx;" v-if="index!='pz'">
 						{{j[index]}}
 					</uni-td>
 					<uni-td :key="120">
 						<uni-tag size="normal" style="width: 60rpx;" inverted="true" :text="j['pz']"
-							:type="j['pz']=='已拍'?'primary':'error'"></uni-tag>
+							:type="j['pz']=='已拍'?'primary':'error'" @click="definePhoto(nu,j['pz'])"></uni-tag>
 					</uni-td>
 					<!-- <uni-td :key="120"><button @click="use(j)" style="width: 120rpx;font-size: small;color: #FFFAFA; background-color: rgba(49, 139, 74, 1)">编辑</button></uni-td>
 	 -->
@@ -48,9 +50,12 @@
 
 			</uni-table>
 			<!-- table2 -->
-			
+
 		</uni-card>
-		<view style="padding-left: 32%; padding-top: 15rpx;"><text style="color: #606266;padding-right: 12rpx;">累计:</text><label style="background-color: #F0F0F0; padding: 8rpx 50rpx 12rpx 50rpx;">{{chooseNum}}</label><text style="color: #606266">份</text>
+		<view style="padding-left: 32%; padding-top: 15rpx;"><text
+				style="color: #606266;padding-right: 12rpx;">累计:</text><label
+				style="background-color: #F0F0F0; padding: 8rpx 50rpx 12rpx 50rpx;">{{chooseNum}}</label><text
+				style="color: #606266">份</text>
 
 			<!-- 累计<uni-tag :text="chooseNum+`份`"></uni-tag> -->
 		</view>
@@ -87,7 +92,7 @@
 				chooseNum: 0,
 				totalContent: 100,
 				// styleUse:{height: '100%'},
-				datetimerange: [],
+				datetime: '',
 				header: ['日期车号', '交货单号', '数量', '起点', '讫点', '单位', '拍照'],
 				listSecond: [],
 				list: [{
@@ -136,7 +141,7 @@
 						qd: "1",
 						yd: "11",
 						dw: "垛",
-						pz: "未拍",
+						pz: "补拍",
 
 					},
 					{
@@ -238,7 +243,28 @@
 
 			},
 			dcClick() {
-					this.$emit("qshdReturn", false)
+				this.$emit("qshdReturn", false)
+
+			},
+			definePhoto(e, data) {
+				if (data == "补拍") {
+					console.log(e, data)
+					uni.chooseImage({
+						count: 9,
+						sizeType: ['original', 'compressed'],
+						sourceType: ['camera'], //这要注意，camera掉拍照，album是打开手机相册
+						success: (res) => {
+							// console.log(res);
+							// const tempFilePaths = res.tempFilePaths;
+							// this.zp = res.tempFilePaths[0];
+							// console.log(this.zp)
+							this.list.push(res.tempFilePaths[0])
+							console.log(res.tempFilePaths[0])
+							// console.log(this.list)
+
+						}
+					});
+				}
 
 			},
 			searchUse() {
@@ -251,13 +277,15 @@
 					!this.carOrgoodsNum ||
 					(data['rqch'] + "")
 					.toLowerCase()
+					.includes(this.carOrgoodsNum.toLowerCase()) || (data['jhdh'] + "")
+					.toLowerCase()
 					.includes(this.carOrgoodsNum.toLowerCase())
 
 				).filter(
-					data => !this.datetimerange[0] ||
+					data => !this.datetime ||
 					(data['rqch'] + "")
 					.toLowerCase()
-					.includes(this.datetimerange[0].replaceAll("-", "/").toLowerCase())
+					.includes(this.datetime.replaceAll("-", "/").toLowerCase())
 
 				)
 				// .filter(data => !this.datetimerange[1] ||
@@ -281,9 +309,13 @@
 		font-size: xx-small !important;
 	}
 
-	/deep/ .uni-date-x.uni-date-range {
+	/* 	/deep/ .uni-date-x.uni-date-range {
+		height: 57rpx;
+	} */
+	/deep/ .uni-date-x.uni-date-single {
 		height: 57rpx;
 	}
+
 
 	/deep/ .uni-easyinput__content.is-input-border {
 		height: 60rpx !important;
@@ -343,6 +375,11 @@
 		font-size: smaller;
 		background-color: rgba(49, 139, 74, 1);
 		color: #FFFAFA;
+
+	}
+
+	/deep/ .uni-date__icon-clear {
+		margin-top: -12rpx !important;
 
 	}
 </style>
